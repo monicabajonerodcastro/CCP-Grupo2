@@ -1,0 +1,22 @@
+version: '3.6'
+
+services:
+  orden:
+    build: 
+      context: orden
+    ports:
+      - "5001:5001"
+  plan-ruta:
+    build: 
+      context: plan-ruta
+    ports:
+      - "5002:5002"
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - orden
+      - plan-ruta
+    ports:
+      - "8080:8080"
