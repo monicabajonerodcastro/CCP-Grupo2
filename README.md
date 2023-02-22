@@ -18,6 +18,9 @@ http://localhost:8080/plan-ruta
 
 http://localhost:8080/ordenes
 
+## Endpoints - Microservicios
+
+http://localhost:5005/health-check
 
 ## License
 
