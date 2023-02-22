@@ -1,6 +1,15 @@
 version: '3.6'
 
 services:
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    ports:
+      - '5672:5672' #The standard AMQP protocol port
+      - '15672:15672' #HTTP management UI
+    environment:
+      AMQP_URL: 'amqp;//rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
   orden:
     build: 
       context: orden
