@@ -5,7 +5,7 @@ from flask_restful import Api
 import datetime
 
 from modelo import db, Orden
-from vista import VistaOrden
+from vista import VistaOrden, VistaHealthCheck
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbapp.sqlite'
@@ -21,11 +21,7 @@ cors = CORS(app)
 
 api = Api(app)
 api.add_resource(VistaOrden, '/ordenes')
+api.add_resource(VistaHealthCheck, '/health-check')
 
-#Insertar Datos
-#with app.app_context():
-#    o = Orden(id=1, nombre_cliente='Exito 170', direccion='{4.755046542855191, -74.04498580229195}', fecha_entrega=datetime.datetime(2023,2,23))
-#    db.session.add(o)
-#    db.session.commit()
 
 
