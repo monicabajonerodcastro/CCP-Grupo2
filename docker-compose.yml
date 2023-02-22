@@ -4,6 +4,8 @@ services:
   orden:
     build: 
       context: orden
+    ports:
+      - "5005:5005"
   plan-ruta-1:
     build: 
       context: plan-ruta-1
