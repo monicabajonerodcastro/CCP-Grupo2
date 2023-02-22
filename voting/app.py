@@ -17,3 +17,5 @@ def get():
 
     response = {'1': data_1['message'], '2': data_2['message'], '3': data_3['message']}
     return jsonify(response)
+
+
