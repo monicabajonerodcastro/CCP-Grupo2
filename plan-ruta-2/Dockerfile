@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-WORKDIR /plan-ruta
+WORKDIR /plan-ruta-2
 
 COPY . .
 

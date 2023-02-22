@@ -4,16 +4,28 @@ services:
   orden:
     build: 
       context: orden
-  plan-ruta:
+  plan-ruta-1:
     build: 
-      context: plan-ruta
+      context: plan-ruta-1
+  plan-ruta-2:
+    build: 
+      context: plan-ruta-2
+  plan-ruta-3:
+    build: 
+      context: plan-ruta-3
+  voting:
+    build: 
+      context: voting
   nginx:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - orden
-      - plan-ruta
+      - plan-ruta-1
+      - plan-ruta-2
+      - plan-ruta-3
+      - voting
     ports:
       - "8080:8080"
 
