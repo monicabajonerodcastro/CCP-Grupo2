@@ -40,6 +40,11 @@ services:
   voting:
     build: 
       context: voting
+  monitoring:
+    build:
+      context: monitoring
+    volumes:
+      - /Users/mbajonero/Documents/U/Maestria/Ciclo-3/Arq/logs:/monitoreo
   nginx:
     image: nginx:latest
     volumes:
@@ -52,4 +57,5 @@ services:
     ports:
       - "8080:8080"
 
-
+volumes:
+  monitoreo:
