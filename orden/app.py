@@ -2,9 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
 
-import datetime
-
-from modelo import db, Orden
+from modelo import db
 from vista import VistaOrden, VistaHealthCheck
 
 app = Flask(__name__)
@@ -22,6 +20,3 @@ cors = CORS(app)
 api = Api(app)
 api.add_resource(VistaOrden, '/ordenes')
 api.add_resource(VistaHealthCheck, '/health-check')
-
-
-
