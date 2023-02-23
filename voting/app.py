@@ -15,7 +15,7 @@ def get():
     data_2 = response_ruta_2.json()
     data_3 = response_ruta_3.json()
 
-    response = {'1': data_1['message'], '2': data_2['message'], '3': data_3['message']}
+    response = {'1': data_1, '2': data_2['message'], '3': data_3['message']}
     return jsonify(response)
 
 
