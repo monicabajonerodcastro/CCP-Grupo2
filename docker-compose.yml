@@ -28,10 +28,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      orden:
-        condition: service_started
   plan-ruta-1:
-    build: 
+    build:
       context: plan-ruta-1
   plan-ruta-2:
     build: 
