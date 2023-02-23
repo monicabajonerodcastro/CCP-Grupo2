@@ -9,7 +9,7 @@
 ### Iniciar el servidor
 Ejecutar el la raiz del proyecto
 ```sh
-docker-compose up
+docker-compose up --build
 ```
 
 ## API Gateway - Endpoints
