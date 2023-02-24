@@ -40,6 +40,9 @@ services:
   voting:
     build: 
       context: voting
+  monitor:
+    build: 
+      context: monitor
   nginx:
     image: nginx:latest
     volumes:
@@ -49,6 +52,7 @@ services:
       - plan-ruta-2
       - plan-ruta-3
       - voting
+      - monitor
     ports:
       - "8080:8080"
 
