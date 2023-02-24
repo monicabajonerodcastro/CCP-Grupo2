@@ -7,19 +7,16 @@ import logging
 
 app = Flask(__name__)
 
-@app.route('/monitor', methods=['GET'])
 def get():
 
-    response_ruta_1 = requests.get(url = "http://orden:5005/health-check")
+    response_health = requests.get(url = "http://orden:5005/health-check")
 
-    data_1 = response_ruta_1.json()
+    data_health = response_health.json()
 
-    if data_1['status']=='UP':
+    if data_health['status']=='UP':
         alert='Connection established'
     else:
         alert='Connection NOT established'
-
-    return alert
 
 def timer():
     while True:
@@ -33,6 +30,6 @@ def timer():
             logging.warning(tiempo+ ' Connection NOT established')
         time.sleep(5)   
 
-logging.basicConfig(filename='logConnection.log', encoding='utf-8', level=logging.DEBUG, force=True)
+logging.basicConfig(filename='logConnection.log', encoding='utf-8', level=logging.INFO)
 t = threading.Thread(target=timer)
 t.start()
