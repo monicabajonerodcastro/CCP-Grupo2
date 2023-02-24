@@ -1,6 +1,7 @@
 from flask import Flask
-from flask import jsonify
+from flask import jsonify, request
 import requests
+import pika
 from decimal import Decimal
 
 app = Flask(__name__)
@@ -8,8 +9,11 @@ app = Flask(__name__)
 
 @app.route('/plan-ruta-1', methods=['GET'])
 def get():
-    response_ruta_1 = requests.get(url="http://orden:5005/ordenes?fecha=2023-02-22&cliente=Exito%20170")
-    data_orden = response_ruta_1.json()
+    params = request.args
+    fecha = params.get("fecha")
+    cliente = params.get("cliente")
+    
+    
 
     def es_valida_direccion(direccion):
         latitud_rangos = [4.51360957443485, 4.778211501715016]
@@ -27,11 +31,30 @@ def get():
 
 
     def validar_listado_direcciones(direcciones):
-        response = {'status': True, 'message': 'la direcciones son validas'}, 200
+        response = {'status': True, 'message': 'la direcciones son validas'}
         for direccion in direcciones:
             if not es_valida_direccion(direccion)['status']:
-                response = {'status': False, 'message': 'Todas las direcciones deben ser validas'}, 200
+                response = {'status': False, 'message': 'Todas las direcciones deben ser validas'}
                 break
         return response
 
-    return jsonify(validar_listado_direcciones(data_orden))
+    try:
+        response_ruta_1 = requests.get(url="http://orden:5005/ordenes?fecha={}&cliente={}".format(fecha, cliente))
+        data_orden = response_ruta_1.json()
+        return jsonify(validar_listado_direcciones(data_orden)),200
+    except:
+        publicar()
+        return jsonify({'status': False, 'message':"No hay conexión con el servicio"}), 200
+
+    
+
+
+def publicar():
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue="plan_ruta")
+    channel.basic_publish(exchange='',
+                            routing_key='plan_ruta',
+                            body="Consulta de direcciones - 1")
+    print("[x] Mensaje enviado", flush=True)
+    connection.close()
