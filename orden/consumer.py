@@ -3,16 +3,16 @@ import pika, sys, os
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
     channel = connection.channel()
-    channel.queue_declare(queue="creacion_plan_ruta")
+    channel.queue_declare(queue="plan_ruta")
 
     def callback(ch, method, properties, body):
-        print("[x] Received %r" % body)
+        print("[x] Mensaje recibido %r" % body)
 
-    channel.basic_consume(queue="creacion_plan_ruta",
+    channel.basic_consume(queue="plan_ruta",
                             auto_ack=True,
                             on_message_callback=callback)
 
-    print('[x] Waiting for messages. To exit press CTRL+C')
+    print('[x] Esperando mensajes...')
     channel.start_consuming()
 
 

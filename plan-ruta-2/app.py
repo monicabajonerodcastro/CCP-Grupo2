@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/plan-ruta-2', methods=['GET'])
 def get():
-    response = {'message': 'Respuesta plan ruta # 2'}
-    return jsonify(response)
+    response = {'status':True, 'message': 'Respuesta plan ruta # 2'}
+    return jsonify(response), 200
 
 
