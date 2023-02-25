@@ -1,12 +1,15 @@
-from flask import Flask 
-from flask import jsonify
+import importlib
+from .modelos import db
+from flask_restful import Api
+from .vistas import vistaCrearPlanRuta
 
+planRuta2 = importlib.import_module("plan-ruta-2")
+app = planRuta2.create_app('default')
+app_context = app.app_context()
+app_context.push()
 
-app = Flask(__name__)
+db.init_app(app)
+db.create_all()
 
-@app.route('/plan-ruta-2', methods=['GET'])
-def get():
-    response = {'status':True, 'message': 'Respuesta plan ruta # 2'}
-    return jsonify(response), 200
-
-
+api = Api(app)
+api.add_resource(vistaCrearPlanRuta, '/plan-ruta-2')
