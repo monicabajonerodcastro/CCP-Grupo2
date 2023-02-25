@@ -24,12 +24,14 @@ def get():
     print(data_2, flush=True)
     print(data_3, flush=True)
 
-    if(data_1['status'] and data_2['status'] and data_3['status']):
-        response = {'status': True, 'message':"Mensaje valido"}
-        publicar()
+    if(data_1['status'] == data_2['status'] == data_3['status']):
+        print("La respuesta de los servicios son iguales", flush=True)
+        response = {'status': True, 'message':"La respuesta de los servicios son iguales"}
     else:
-        response = {'status': False, 'message':"Mensaje invalido - Al menos una validación falló"}
+        print("Al menos una respuesta es diferente. Servicio 1: {}, Servicio 2: {}, Servicio 3: {}".format(data_1['status'], data_2['status'], data_3['status']), flush=True)
+        response = {'status': False, 'message':"Al menos una respuesta es diferente"}
     
+    print("=======================================================================================================================", flush=True)
     return jsonify(response)
 
 

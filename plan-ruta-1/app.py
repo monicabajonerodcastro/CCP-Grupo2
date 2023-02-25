@@ -34,6 +34,7 @@ def get():
         response = {'status': True, 'message': 'la direcciones son validas'}
         for direccion in direcciones:
             if not es_valida_direccion(direccion)['status']:
+                print("Validacion fallo # 1", flush=True)
                 response = {'status': False, 'message': 'Todas las direcciones deben ser validas'}
                 break
         return response
@@ -41,7 +42,8 @@ def get():
     try:
         response_ruta_1 = requests.get(url="http://orden:5005/ordenes?fecha={}&cliente={}".format(fecha, cliente))
         data_orden = response_ruta_1.json()
-        return jsonify(validar_listado_direcciones(data_orden)),200
+        valildacion = validar_listado_direcciones(data_orden)
+        return jsonify(valildacion),200
     except:
         publicar()
         return jsonify({'status': False, 'message':"No hay conexión con el servicio"}), 200

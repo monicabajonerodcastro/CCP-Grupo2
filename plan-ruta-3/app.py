@@ -11,7 +11,6 @@ def get():
     fecha = params.get("fecha")
     cliente = params.get("cliente")
     
-
     try:
         response_ruta_1 = requests.get(url="http://orden:5005/ordenes?fecha={}&cliente={}".format(fecha, cliente))
         data_1 = response_ruta_1.json()
@@ -27,6 +26,7 @@ def get():
         if(retorno):
             mensaje='Los datos son validos'
         else:
+            print("Validacion fallo # 3", flush=True)
             mensaje='Los datos no son validos'
         response = {'message': mensaje, 'status': retorno}
         return jsonify(response), 200
