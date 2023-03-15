@@ -1,7 +1,9 @@
 import pika, sys, os, json, requests
 
+HOST_RABBIT_MQ = 'rabbitmq'
+
 def publish(message):
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(HOST_RABBIT_MQ))
     channel = connection.channel()
     channel.queue_declare(queue="CCP-Queue")
     channel.basic_publish(exchange='',
@@ -11,7 +13,7 @@ def publish(message):
     connection.close()
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(HOST_RABBIT_MQ))
     channel = connection.channel()
     channel.queue_declare(queue="RequestOrdenes")
 
@@ -19,7 +21,7 @@ def main():
         print("=== Actualización de orden recibida ===")
         body_decoded = body.decode("utf-8")
         body_json = json.loads(body_decoded)
-        response_ordenes = requests.post(url = "http://127.0.0.1:5000/orden", json=body_json)
+        response_ordenes = requests.post(url = "http://orden:5005/orden", json=body_json)
         response = {
             "operacion": "respuesta",
             "status": response_ordenes.status_code,
@@ -32,7 +34,7 @@ def main():
                             auto_ack=True,
                             on_message_callback=callback)
 
-    print('*** Esperando mensajes ***')
+    print('*** Esperando mensajes (Orden) ***')
     channel.start_consuming()
 
 
