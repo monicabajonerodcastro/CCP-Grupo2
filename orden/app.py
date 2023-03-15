@@ -18,5 +18,5 @@ db.create_all()
 cors = CORS(app)
 
 api = Api(app)
-api.add_resource(VistaOrden, '/ordenes')
+api.add_resource(VistaOrden, '/orden')
 api.add_resource(VistaHealthCheck, '/health-check')
