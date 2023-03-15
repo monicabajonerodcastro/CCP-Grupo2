@@ -32,7 +32,6 @@ def main(queue):
     channel.queue_declare(queue=queue)
 
     def callback(ch, method, properties, body):
-        #TODO print(properties)
         redirect_message(body)
         print("=== Mensaje recibido ===")
 
