@@ -19,41 +19,27 @@ services:
   orden:
     build: 
       context: orden
-    ports:
-      - "5005:5005"
-  consumidor-orden:
+  cola-mensajeria:
+    build: 
+      context: cola-mensajeria
+    command: "python cola-entrada.py"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+  consumer-orden:
     build: 
       context: orden
     command: "python consumer.py"
     depends_on:
       rabbitmq:
         condition: service_healthy
-  plan-ruta-1:
-    build:
-      context: plan-ruta-1
-  plan-ruta-2:
-    build: 
-      context: plan-ruta-2
-  plan-ruta-3:
-    build: 
-      context: plan-ruta-3
-  voting:
-    build: 
-      context: voting
-  monitor:
-    build: 
-      context: monitor
   nginx:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - plan-ruta-1
-      - plan-ruta-2
-      - plan-ruta-3
-      - voting
-      - monitor
+      - orden
+      - cola-mensajeria
+      - consumer-orden
     ports:
       - "8080:8080"
-
-

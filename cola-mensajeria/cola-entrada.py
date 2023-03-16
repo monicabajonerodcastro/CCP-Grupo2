@@ -1,10 +1,9 @@
 import pika, sys, os, json
 
-#{"operacion": "consultar_vendedor", "id":"123456789"}
-#{"operacion": "actualizar_orden", "id":"123456789"}
+HOST_RABBIT_MQ = 'rabbitmq'
 
 def publish_queue(queue, message):
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(HOST_RABBIT_MQ))
     channel = connection.channel()
     channel.queue_declare(queue=queue)
     channel.basic_publish(exchange='',
@@ -27,7 +26,7 @@ def redirect_message(body):
 
 
 def main(queue):
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(HOST_RABBIT_MQ))
     channel = connection.channel()
     channel.queue_declare(queue=queue)
 
@@ -39,7 +38,7 @@ def main(queue):
                             auto_ack=True,
                             on_message_callback=callback)
 
-    print('*** Esperando mensajes ***')
+    print('*** Esperando mensajes {} ***'.format(queue))
     channel.start_consuming()
 
 
