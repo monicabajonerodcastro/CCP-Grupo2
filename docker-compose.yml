@@ -22,13 +22,9 @@ services:
   usuario:
     build: 
       context: usuario
-    ports:
-      - "5002:5002"
   autorizador-generador:
     build: 
       context: autorizador-generador
-    ports:
-      - "5003:5003"
   cola-mensajeria:
     build: 
       context: cola-mensajeria
