@@ -36,10 +36,6 @@ class VistaValidar(Resource):
     def post(self):
         tipo_operacion = request.json["operacion"]
         claims = get_jwt()
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now)
-        if target_timestamp > claims['exp']:
-            return {"mensaje": "El token expiro"}, 401
         entitlements = {'request': False, 'update': False}
         response = {}
         if claims['id_rol'] == 1:
@@ -51,20 +47,12 @@ class VistaValidar(Resource):
             return {"mensaje": "El usuario no tiene permisos para esta acción"}, 401
 
         if tipo_operacion == "actualizar_orden" and entitlements['update'] == True:
-            # TODO -> revisar si se puede pasar directo el json
-            body_json = {
-                "operacion": request.json["operacion"],
-                "id": request.json["id"],
-                "nombre_cliente": request.json["nombre_cliente"],
-                "direccion": request.json["direccion"],
-                "fecha_entrega": request.json["fecha_entrega"]
-            }
-            response = requests.post(url="http://orden:5005/orden", json=body_json)
+            response = requests.post(url="http://orden:5005/orden", json=request.json)
+            response = response.json()
         elif tipo_operacion == "consultar_vendedor" and entitlements['request'] == True:
             # TODO -> redirigir a servicio de consulta vendedor
             # response = requests.get(url = "http://orden:5005/vendedor", json=request.json)
             response = {"mensaje": "Soy el admin y puedo consultar"}, 401
         else:
             return {"mensaje": "Operación no valida"}, 401
-
         return response
