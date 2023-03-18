@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 import hashlib
 from modelos import db, Usuario, RolTipo
-from vistas import VistaUsuario
+from vistas import VistaUsuario, VistaUsuarios
 
 
 
@@ -24,6 +24,7 @@ cors = CORS(app)
 
 api = Api(app)
 api.add_resource(VistaUsuario, '/signin')
+api.add_resource(VistaUsuarios, '/usuario')
 
 jwt = JWTManager(app)
 

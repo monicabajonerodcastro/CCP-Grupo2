@@ -17,6 +17,14 @@ class VistaUsuario(Resource):
             return "Credenciales incorrectas", 404
         else:
             return usuario_schema.dump(usuario)    
+    
+class VistaUsuarios(Resource):
+    def get(self):
+        usuario = Usuario.query.filter(Usuario.usuario == request.json["usuario"]).first()
+        if usuario is None:
+            return "Usuario no encontrado", 404
+        else:
+            return usuario_schema.dump(usuario)
 
 
 

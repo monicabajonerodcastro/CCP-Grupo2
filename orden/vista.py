@@ -7,9 +7,7 @@ orden_schema = OrdenSchema()
 
 class VistaOrden(Resource):
     def post(self):
-        print(request)
         id_orden = request.json["id"]
-        print(id_orden)
         orden = Orden.query.get_or_404(id_orden)
         if orden is None:
             return "No se encuentra a orden {}".format(id_orden), 404
@@ -17,7 +15,6 @@ class VistaOrden(Resource):
             orden.nombre_cliente = request.json["nombre_cliente"]
             orden.direccion = request.json["direccion"]
             fecha_entrega = request.json["fecha_entrega"].split("-")
-            print(fecha_entrega)
             orden.fecha_entrega = datetime.datetime(year=int(fecha_entrega[0]),
                                                     month=int(fecha_entrega[1]),
                                                     day=int(fecha_entrega[2]))

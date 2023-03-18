@@ -39,6 +39,13 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+  consumer-usuario:
+    build: 
+      context: usuario
+    command: "python consumer.py"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
   nginx:
     image: nginx:latest
     volumes:

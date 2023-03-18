@@ -15,27 +15,27 @@ def publish(message):
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters(HOST_RABBIT_MQ))
     channel = connection.channel()
-    channel.queue_declare(queue="RequestOrdenes")
+    channel.queue_declare(queue="RequestUsuarios")
 
     def callback(ch, method, properties, body):
-        print("========== Actualización de orden recibida ==========", flush=True)
+        print("========== Consulta de usuario recibida ==========", flush=True)
         body_decoded = body.decode("utf-8")
         body_json = json.loads(body_decoded)
-        response_ordenes = requests.post(url = "http://orden:5005/orden", json=body_json)
+        response_usuario = requests.get(url = "http://usuario:5002/usuario", json=body_json)
         response = {
             "operacion": "respuesta",
-            "tipo_operacion": "actualizacion",
-            "status": response_ordenes.status_code,
-            "orden": response_ordenes.json()
+            "tipo_operacion": "consulta",
+            "status": response_usuario.status_code,
+            "orden": response_usuario.json()
         }
         publish(response)
 
 
-    channel.basic_consume(queue="RequestOrdenes",
+    channel.basic_consume(queue="RequestUsuarios",
                             auto_ack=True,
                             on_message_callback=callback)
 
-    print('********** Esperando mensajes (Orden) **********', flush=True)
+    print('********** Esperando mensajes (Usuarios) **********', flush=True)
     channel.start_consuming()
 
 

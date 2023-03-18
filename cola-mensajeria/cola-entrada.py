@@ -1,6 +1,13 @@
-import pika, sys, os, json
+import pika, sys, os, json, datetime
 
 HOST_RABBIT_MQ = 'rabbitmq'
+
+def write_log(message):
+    file_log = open('Log-MessageQueue.log', 'a')
+    file_log.write("{} - {} - {} \n".format(datetime.datetime.now(), message["tipo_operacion"], message["status"]))
+    file_log.close()
+
+
 
 def publish_queue(queue, message):
     connection = pika.BlockingConnection(pika.ConnectionParameters(HOST_RABBIT_MQ))
@@ -9,7 +16,7 @@ def publish_queue(queue, message):
     channel.basic_publish(exchange='',
                             routing_key=queue,
                             body=json.dumps(message))
-    print("=== Mensaje enviado a {} ===".format(queue), flush=True)
+    print("========== Mensaje enviado a {} ==========".format(queue), flush=True)
     connection.close()
 
 
@@ -22,7 +29,7 @@ def redirect_message(body):
         publish_queue(queue="RequestOrdenes", message=body_json)
     else:
         #TODO retornar
-        print("ok")
+        write_log(body_json)
 
 
 def main(queue):
@@ -32,17 +39,19 @@ def main(queue):
 
     def callback(ch, method, properties, body):
         redirect_message(body)
-        print("=== Mensaje recibido ===")
+        print("========== Mensaje recibido {} ==========".format(queue), flush=True)
 
     channel.basic_consume(queue=queue,
                             auto_ack=True,
                             on_message_callback=callback)
 
-    print('*** Esperando mensajes {} ***'.format(queue))
+    print('********** Esperando mensajes {} **********'.format(queue), flush=True)
+
+    file_log = open('Log-MessageQueue.log', 'w')
+    file_log.close()
+
     channel.start_consuming()
 
-
-print(__name__)
 if __name__ == '__main__':
     try:
         main("CCP-Queue")

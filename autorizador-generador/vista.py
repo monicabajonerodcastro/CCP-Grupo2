@@ -1,4 +1,4 @@
-import json
+import json, pika
 from flask import request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from flask_restful import Resource
@@ -6,6 +6,7 @@ import requests
 from datetime import datetime
 from datetime import timezone
 
+HOST_RABBIT_MQ = 'rabbitmq'
 
 class VistaToken(Resource):
 
@@ -18,7 +19,6 @@ class VistaToken(Resource):
         # try:
         response = requests.post(url="http://usuario:5002/signin", json=json_body)
         data = response.json()
-        print(response)
         if data == "Credenciales incorrectas" or data is None:
             return {"mensaje": "Credenciales incorrectas"}, 401
         else:
@@ -34,10 +34,10 @@ class VistaValidar(Resource):
 
     @jwt_required()
     def post(self):
-        tipo_operacion = request.json["operacion"]
+        #tipo_operacion = request.json["operacion"]
         claims = get_jwt()
         entitlements = {'request': False, 'update': False}
-        response = {}
+        #response = {}
         if claims['id_rol'] == 1:
             entitlements['request'] = True
             entitlements['update'] = True
@@ -46,13 +46,30 @@ class VistaValidar(Resource):
         else:
             return {"mensaje": "El usuario no tiene permisos para esta acción"}, 401
 
-        if tipo_operacion == "actualizar_orden" and entitlements['update'] == True:
-            response = requests.post(url="http://orden:5005/orden", json=request.json)
-            response = response.json()
-        elif tipo_operacion == "consultar_vendedor" and entitlements['request'] == True:
-            # TODO -> redirigir a servicio de consulta vendedor
-            # response = requests.get(url = "http://orden:5005/vendedor", json=request.json)
-            response = {"mensaje": "Soy el admin y puedo consultar"}, 401
-        else:
-            return {"mensaje": "Operación no valida"}, 401
-        return response
+        #if tipo_operacion == "actualizar_orden" and entitlements['update'] == True:
+        #    response = requests.post(url="http://orden:5005/orden", json=request.json)
+        #elif tipo_operacion == "consultar_vendedor" and entitlements['request'] == True:
+        #    response = requests.get(url = "http://usuario:5002/usuario", json=request.json)
+        #else:
+        #    return {"mensaje": "Operación no valida"}, 401
+        request_json = {
+            "operacion": request.json["operacion"],
+            "id": request.json["id"],
+            "usuario": request.json["usuario"],
+            "nombre_cliente": request.json["nombre_cliente"],
+            "direccion": request.json["direccion"],
+            "fecha_entrega": request.json["fecha_entrega"]    
+        }
+        publish_queue(request_json)
+        return {"mensaje": "Operación enviada correctamente"}, 200
+
+
+def publish_queue(message):
+    connection = pika.BlockingConnection(pika.ConnectionParameters(HOST_RABBIT_MQ))
+    channel = connection.channel()
+    channel.queue_declare(queue="CCP-Queue")
+    channel.basic_publish(exchange='',
+                            routing_key="CCP-Queue",
+                            body=json.dumps(message))
+    print("========== Mensaje enviado a CCP-Queue ==========", flush=True)
+    connection.close()
