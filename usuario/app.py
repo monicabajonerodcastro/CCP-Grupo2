@@ -6,8 +6,6 @@ import hashlib
 from modelos import db, Usuario, RolTipo
 from vistas import VistaUsuario, VistaUsuarios
 
-
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbapp.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -28,23 +26,28 @@ api.add_resource(VistaUsuarios, '/usuario')
 
 jwt = JWTManager(app)
 
-#Inicializar usuarios en base de datos
+# Inicializar usuarios en base de datos
 with app.app_context():
     usuarios = db.session.query(Usuario).all()
     for usuario in usuarios:
         db.session.delete(usuario)
         db.session.commit()
-        
+
     contrasena = 'miso2022'
-    usuario = Usuario(usuario='jm.carrillo', contrasena=hashlib.md5(contrasena.encode('utf-8')).hexdigest(), rol=RolTipo.ADMIN)
+    usuario = Usuario(usuario='jm.carrillo', contrasena=hashlib.md5(contrasena.encode('utf-8')).hexdigest(),
+                      rol=RolTipo.ADMIN)
     db.session.add(usuario)
     db.session.commit()
     contrasena = 'miso2023'
-    usuario = Usuario(usuario='w.sanchez', contrasena=hashlib.md5(contrasena.encode('utf-8')).hexdigest(), rol=RolTipo.VENDEDOR)
+    usuario = Usuario(usuario='w.sanchez', contrasena=hashlib.md5(contrasena.encode('utf-8')).hexdigest(),
+                      rol=RolTipo.VENDEDOR)
     db.session.add(usuario)
-    db.session.commit()    
-
-
+    db.session.commit()
+    contrasena = 'miso2023'
+    usuario = Usuario(usuario='a.calamaro', contrasena=hashlib.md5(contrasena.encode('utf-8')).hexdigest(),
+                      rol=RolTipo.OTHER)
+    db.session.add(usuario)
+    db.session.commit()
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')

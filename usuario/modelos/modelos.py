@@ -8,7 +8,8 @@ db = SQLAlchemy()
 
 class RolTipo(enum.Enum):
     VENDEDOR = 1
-    ADMIN = 2    
+    ADMIN = 2
+    OTHER = 3
 
 
 class Usuario(db.Model):
