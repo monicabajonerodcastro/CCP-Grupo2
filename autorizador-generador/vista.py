@@ -34,7 +34,7 @@ class VistaValidar(Resource):
 
     @jwt_required()
     def post(self):
-        #tipo_operacion = request.json["operacion"]
+        tipo_operacion = request.json["operacion"]
         claims = get_jwt()
         entitlements = {'request': False, 'update': False}
         #response = {}
@@ -45,23 +45,31 @@ class VistaValidar(Resource):
             entitlements['request'] = True
         else:
             return {"mensaje": "El usuario no tiene permisos para esta acción"}, 401
-
+        
+        if tipo_operacion == "consultar_vendedor" and entitlements['request'] == True:
+            response = requests.get(url = "http://usuario:5002/usuario", json=request.json)
+            return response.json()
+        elif entitlements['update'] == True:
+            request_json = {
+                "operacion": request.json["operacion"],
+                "id": request.json["id"],
+                "usuario": request.json["usuario"],
+                "nombre_cliente": request.json["nombre_cliente"],
+                "direccion": request.json["direccion"],
+                "fecha_entrega": request.json["fecha_entrega"]    
+            }
+            publish_queue(request_json)
+            return {"mensaje": "Operación enviada correctamente"}, 200
+        else:
+            return {"mensaje": "Operación no valida"}, 401
+        
         #if tipo_operacion == "actualizar_orden" and entitlements['update'] == True:
         #    response = requests.post(url="http://orden:5005/orden", json=request.json)
         #elif tipo_operacion == "consultar_vendedor" and entitlements['request'] == True:
         #    response = requests.get(url = "http://usuario:5002/usuario", json=request.json)
         #else:
         #    return {"mensaje": "Operación no valida"}, 401
-        request_json = {
-            "operacion": request.json["operacion"],
-            "id": request.json["id"],
-            "usuario": request.json["usuario"],
-            "nombre_cliente": request.json["nombre_cliente"],
-            "direccion": request.json["direccion"],
-            "fecha_entrega": request.json["fecha_entrega"]    
-        }
-        publish_queue(request_json)
-        return {"mensaje": "Operación enviada correctamente"}, 200
+       
 
 
 def publish_queue(message):
